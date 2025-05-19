@@ -1,0 +1,42 @@
+# Smithery configuration file: https://smithery.ai/docs/build/project-config
+
+startCommand:
+  type: stdio
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({
+      command: 'python',
+      args: ['-m', 'notion_api_mcp'],
+      env: {
+        NOTION_API_KEY: config.notionApiKey,
+        NOTION_DATABASE_ID: config.notionDatabaseId,
+        NOTION_PARENT_PAGE_ID: config.notionParentPageId,
+        ...(config.databaseTemplateId ? { DATABASE_TEMPLATE_ID: config.databaseTemplateId } : {})
+      }
+    })
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - notionApiKey
+      - notionDatabaseId
+      - notionParentPageId
+    properties:
+      notionApiKey:
+        type: string
+        description: Notion API integration token (ntn_...)
+      notionDatabaseId:
+        type: string
+        description: Default Notion database ID for todos
+      notionParentPageId:
+        type: string
+        description: Parent page ID for creating new pages
+      databaseTemplateId:
+        type: string
+        description: Optional database template ID
+  exampleConfig:
+    notionApiKey: ntn_1234567890abcdef1234567890abcdef
+    notionDatabaseId: abcdef1234567890abcdef1234567890
+    notionParentPageId: fedcba0987654321fedcba0987654321
+    databaseTemplateId: template1234abcd
